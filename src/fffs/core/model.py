@@ -21,6 +21,7 @@ class ModelFunction(object):
     name:Optional[str] = None
     description:Optional[str] = None
     parameters:List[ParameterDefinition] = []
+    siblings:List[str] = []
 
     @abc.abstractmethod
     def fitfunction(self, x:Union[np.ndarray, float], *args, **kwargs) -> np.ndarray:
@@ -65,3 +66,6 @@ class ModelFunction(object):
         for c in cls._iter_subclasses():
             if c.category is not None and c.subcategory is not None and c.name is not None:
                 yield c
+
+    def __call__(self, x:Union[np.ndarray, float], *args, **kwargs) -> np.ndarray:
+        return self.fitfunction(x, *args, **kwargs)

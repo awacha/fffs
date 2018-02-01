@@ -1,2 +1,1 @@
-from . import linear
-from . import powerlaw
+from . import linear, powerlaw, gaussian, lorentzian
