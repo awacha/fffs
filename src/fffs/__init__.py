@@ -1,5 +1,5 @@
 from .core import ParameterDefinition, ModelFunction
-from . import basic
+from . import basic, sas
 
 PD=ParameterDefinition
 
