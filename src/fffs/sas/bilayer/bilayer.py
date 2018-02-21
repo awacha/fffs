@@ -81,8 +81,8 @@ class GaussianBilayerAsymm(ModelFunction):
          Nbilayer, Ndistrib
          ) = args
         self._plotgaussians(ax, R0, dbilayer, Nbilayer, [
-            (rhoGuestIn, zGuestIn, sigmaGuestIn, 'Inner guest'),
-            (rhoHeadIn, zHeadIn, sigmaHeadIn, 'Inner head'),
+            (rhoGuestIn, -zGuestIn, sigmaGuestIn, 'Inner guest'),
+            (rhoHeadIn, -zHeadIn, sigmaHeadIn, 'Inner head'),
             (-1, 0, sigmaTail, 'Carbon chain'),
             (rhoHeadOut, zHeadOut, sigmaHeadOut, 'Outer head'),
             (rhoGuestOut, zGuestOut, sigmaGuestOut, 'Outer guest')
@@ -92,6 +92,8 @@ class GaussianBilayerAsymm(ModelFunction):
     @staticmethod
     def _gaussian(x, A, x0, sigma, R0_is_zero=False):
         # the area under the peak must be 4*pi*sqrt(2*pi*sigma**2)*(x0**2+sigma**2)
+        if sigma==0:
+            return np.zeros_like(x)
         if not R0_is_zero:
             return A*4*np.pi*(x0**2+sigma**2)*np.exp(-(x-x0)**2/(2*sigma**2))
         else:
@@ -99,13 +101,13 @@ class GaussianBilayerAsymm(ModelFunction):
 
     def _plotgaussians(self, axes:Axes, R0:float, d:float, Nbilayers:int, values:List[Tuple[float,float,float,str]]):
         zmin = min([(z0-3*sigma) for rho, z0, sigma, label in values])+R0
-        zmax = max([z0+3*sigma for rho, z0, sigma, label in values])+R0+Nbilayers*d
-        z=np.linspace(zmin,zmax,10000)
+        zmax = max([z0+3*sigma for rho, z0, sigma, label in values])+R0+(Nbilayers-1)*d
+        z=np.linspace(zmin,zmax,1000)
         total=0
         for rho, z0, sigma, label in values:
             y=0
             for i in range(Nbilayers):
-                y += self._gaussian(rho, z0, sigma, R0==0)
+                y += self._gaussian(z, rho, R0+z0+i*d, sigma, R0==0)
             axes.plot(z,y,'-',label=label)
             total += y
         axes.plot(z, total, 'k-', label='Total')
@@ -129,7 +131,7 @@ class GaussianBilayerAsymmGuest(GaussianBilayerAsymm):
                                       1.6903, lbound=0),
                   ParameterDefinition('sigmaGuestIn', 'HWHM of the inner guest molecule layer', 0.659, lbound=0),
                   ParameterDefinition('rhoHead', 'relative electron density of the headgroup layers (tail is -1)', 0.21787),
-                  ParameterDefinition('zHeadIn', 'distance of the headgroup layers from the bilayer center',
+                  ParameterDefinition('zHead', 'distance of the headgroup layers from the bilayer center',
                                       1.6903, lbound=0),
                   ParameterDefinition('sigmaHead', 'HWHM of the headgroup layers', 0.132, lbound=0),
                   ParameterDefinition('sigmaTail', 'HWHM of the tail layer', 0.80258, lbound=0),
@@ -193,7 +195,7 @@ class GaussianBilayerSymm(GaussianBilayerAsymm):
                                       10, lbound=0),
                   ParameterDefinition('sigmaGuest', 'HWHM of the guest molecule layers', 5, lbound=0),
                   ParameterDefinition('rhoHead', 'relative electron density of the headgroup layers (tail is -1)', 1),
-                  ParameterDefinition('zHeadIn', 'distance of the headgroup layers from the bilayer center',
+                  ParameterDefinition('zHead', 'distance of the headgroup layers from the bilayer center',
                                       2.5, lbound=0),
                   ParameterDefinition('sigmaHead', 'HWHM of the headgroup layers', 5, lbound=0),
                   ParameterDefinition('sigmaTail', 'HWHM of the tail layer', 1, lbound=0),
