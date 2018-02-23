@@ -67,7 +67,7 @@ cpdef np.ndarray[np.double_t, ndim=1] ISSVasymm(double[:] q, double R0, double d
             if ibilayer<Nbilayers-1:
                 r += ddbilayer*gaussrand()+dbilayer
         for iq in range(q.size):
-            I[iq]+=F[iq]**2
+            I[iq]+=w*F[iq]**2
 
     free(F)
     return I/weight
