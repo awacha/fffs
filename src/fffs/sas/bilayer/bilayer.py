@@ -37,7 +37,7 @@ class GaussianBilayerAsymm(ModelFunction):
                   ParameterDefinition('dbilayer', 'Periodic repeat distance of the bilayers', 6.4, lbound=0),
                   ParameterDefinition('ddbilayer', 'HWHM of the periodic repeat distance of the bilayers', 0.1, lbound=0),
                   ParameterDefinition('Nbilayer', 'Number of bilayers', 2, lbound=1, fittable=False, coerce_type=int),
-                  ParameterDefinition('Ndistrib', 'Size distribution integration count', 1000, lbound=1, fittable=False, coerce_type=int),
+                  ParameterDefinition('Ndistrib', 'Size distribution integration count', 70, lbound=1, fittable=False, coerce_type=int),
                   ]
 
     def fitfunction(self, x:Union[np.ndarray, float], *args, **kwargs):
@@ -100,6 +100,7 @@ class GaussianBilayerAsymm(ModelFunction):
             return A*4*np.pi*(sigma**2)*np.exp(-(x-x0)**2/(2*sigma**2))
 
     def _plotgaussians(self, axes:Axes, R0:float, d:float, Nbilayers:int, values:List[Tuple[float,float,float,str]]):
+        Nbilayers = 1
         zmin = min([(z0-3*sigma) for rho, z0, sigma, label in values])+R0
         zmax = max([z0+3*sigma for rho, z0, sigma, label in values])+R0+(Nbilayers-1)*d
         z=np.linspace(zmin,zmax,1000)
@@ -107,7 +108,7 @@ class GaussianBilayerAsymm(ModelFunction):
         for rho, z0, sigma, label in values:
             y=0
             for i in range(Nbilayers):
-                y += self._gaussian(z, rho, R0+z0+i*d, sigma, R0==0)
+                y += self._gaussian(z, rho, R0+z0+i*d, sigma, R0_is_zero=True)
             axes.plot(z,y,'-',label=label)
             total += y
         axes.plot(z, total, 'k-', label='Total')
@@ -144,7 +145,7 @@ class GaussianBilayerAsymmGuest(GaussianBilayerAsymm):
                   ParameterDefinition('dbilayer', 'Periodic repeat distance of the bilayers', 7.299164, lbound=0),
                   ParameterDefinition('ddbilayer', 'HWHM of the periodic repeat distance of the bilayers', 0.14581464, lbound=0),
                   ParameterDefinition('Nbilayer', 'Number of bilayers', 2, lbound=1, fittable=False, coerce_type=int),
-                  ParameterDefinition('Ndistrib', 'Size distribution integration count', 1000, lbound=1, fittable=False, coerce_type=int),
+                  ParameterDefinition('Ndistrib', 'Size distribution integration count', 70, lbound=1, fittable=False, coerce_type=int),
                   ]
 
     def fitfunction(self, x:Union[np.ndarray, float], *args, **kwargs):
@@ -204,7 +205,7 @@ class GaussianBilayerSymm(GaussianBilayerAsymm):
                   ParameterDefinition('ddbilayer', 'HWHM of the periodic repeat distance of the bilayers', 0.1,
                                       lbound=0),
                   ParameterDefinition('Nbilayer', 'Number of bilayers', 2, lbound=1, fittable=False, coerce_type=int),
-                  ParameterDefinition('Ndistrib', 'Size distribution integration count', 1000, lbound=1, fittable=False,
+                  ParameterDefinition('Ndistrib', 'Size distribution integration count', 70, lbound=1, fittable=False,
                                       coerce_type=int),
                   ]
 

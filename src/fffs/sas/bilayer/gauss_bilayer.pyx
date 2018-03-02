@@ -51,7 +51,7 @@ cpdef np.ndarray[np.double_t, ndim=1] ISSVasymm(double[:] q, double R0, double d
     for idistrib in range(Ndistrib):
         memset(F, 0, sizeof(double)*q.size)
         if Ndistrib>1:
-            r=R0 -3*dR + 6*dR*(idistrib)/(Ndistrib-1)
+            r=R0 -3*dR + 6*dR*(idistrib)/<double>(Ndistrib-1.0)
             w = exp(-(r-R0)**2/(2*dR**2))
         else:
             r=R0
