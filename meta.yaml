@@ -1,0 +1,34 @@
+package:
+  name: fffs
+  version: {{ GIT_DESCRIBE_TAG }}
+
+source:
+  git_url: ./
+
+build:
+  number: {{ GIT_DESCRIBE_NUMBER }}
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - setuptools_scm
+    - matplotlib
+    - numpy
+    - scipy
+    - cython
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - matplotlib
+
+about:
+  home: https://github.com/awacha/fffs
+  license: 3-clause BSD license
+  dev_url: https://github.com/awacha/fffs.git
+  license_family: BSD
+  license_file: LICENSE
+  summary: Fit functions for small-angle scattering
+  description: Fit functions for small-angle scattering and other experimental methods
