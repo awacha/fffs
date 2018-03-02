@@ -4,3 +4,6 @@
 /dist/
 /build/
 *~
+*.c
+model_template.py
+
