@@ -1,1 +1,1 @@
-from . import guinier, bilayer
+from . import guinier, bilayer, nanoparticles
