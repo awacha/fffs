@@ -32,6 +32,13 @@ cdef inline double FGaussLayer(double q, double R0, double sigma) nogil:
     return 4*M_PI*sqrt(2*M_PI*sigma**2)* \
        exp(-sigma**2*q**2/2)*(R0/q*sin(q*R0)+sigma**2*cos(q*R0))
 
+cdef inline double FGaussLayerUnitAmplitudeRho(double q, double R0, double sigma) nogil:
+    """Calculates the scattering amplitude of a spherical gaussian electron
+    density profile positioned at r=R0 and its HWHM being sigma. The height of the gaussian
+    electron density is rho.
+    """
+    return exp(-sigma**q**2/2.)*(R0/q*sin(q*R0)+sigma**2*cos(q*R0))/(R0**2+sigma**2)
+
 cpdef np.ndarray[np.double_t, ndim=1] ISSVasymm(double[:] q, double R0, double dR,
                           double rhoGuestIn, double zGuestIn, double sigmaGuestIn,
                           double rhoHeadIn, double zHeadIn, double sigmaHeadIn,

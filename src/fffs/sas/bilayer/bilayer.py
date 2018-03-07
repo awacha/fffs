@@ -90,14 +90,11 @@ class GaussianBilayerAsymm(ModelFunction):
         fig.canvas.draw()
 
     @staticmethod
-    def _gaussian(x, A, x0, sigma, R0_is_zero=False):
+    def _gaussian(x, A, x0, sigma):
         # the area under the peak must be 4*pi*sqrt(2*pi*sigma**2)*(x0**2+sigma**2)
         if sigma==0:
             return np.zeros_like(x)
-        if not R0_is_zero:
-            return A*4*np.pi*(x0**2+sigma**2)*np.exp(-(x-x0)**2/(2*sigma**2))
-        else:
-            return A*4*np.pi*(sigma**2)*np.exp(-(x-x0)**2/(2*sigma**2))
+        return A*np.exp(-(x-x0)**2/(2*sigma**2))
 
     def _plotgaussians(self, axes:Axes, R0:float, d:float, Nbilayers:int, values:List[Tuple[float,float,float,str]]):
         Nbilayers = 1
@@ -108,7 +105,7 @@ class GaussianBilayerAsymm(ModelFunction):
         for rho, z0, sigma, label in values:
             y=0
             for i in range(Nbilayers):
-                y += self._gaussian(z, rho, R0+z0+i*d, sigma, R0_is_zero=True)
+                y += self._gaussian(z, rho, R0+z0+i*d, sigma)
             axes.plot(z,y,'-',label=label)
             total += y
         axes.plot(z, total, 'k-', label='Total')
@@ -185,7 +182,7 @@ class GaussianBilayerAsymmGuest(GaussianBilayerAsymm):
 
 class GaussianBilayerSymm(GaussianBilayerAsymm):
     name = 'gaussian_bilayer_symm'
-    description = 'Symmetric gaussian bilayer with asymmetric guest layers'
+    description = 'Symmetric gaussian bilayer with symmetric guest layers'
     parameters = [ParameterDefinition('A', 'outer intensity scaling factor', 1, lbound=0),
                   ParameterDefinition('bg', 'constant background', 0, lbound=0),
                   ParameterDefinition('R0', 'radius of the innermost bilayer', 40, lbound=0),
